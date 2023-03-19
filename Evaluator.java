@@ -39,7 +39,7 @@ public class Evaluator {
             boolean left = evaluateExpression(terms[0]);
             boolean right = evaluateExpression(terms[1]);
 
-            return (left && right) || (!left && !right);
+            return (left && right) || (!left && !right); // a ↔ b = (a → b) ^ (b → a)
 
         } else if (expression.contains("→")) {
 
@@ -51,7 +51,7 @@ public class Evaluator {
             boolean left = evaluateExpression(terms[0]);
             boolean right = evaluateExpression(terms[1]);
 
-            return !left || right;
+            return !left || right; // a → b = ~a v b
 
         } else if (expression.contains("v")) {
 
@@ -63,28 +63,19 @@ public class Evaluator {
             boolean left = evaluateExpression(terms[0]);
             boolean right = evaluateExpression(terms[1]);
 
-            return left || right;
+            return left || right; // logical OR
 
         } else if (expression.contains("^")) {
 
             String[] terms = expression.split("\\^");
-            boolean result = true;
-            for (String term : terms) {
-                boolean value = true;
-                for (char c : term.toCharArray()) {
-                    if (c == 'T') {
-                        value = value && true;
-                    } else if (c == 'F') {
-                        value = value && false;
-                    } else {
-                        System.err.println("Error: unknown variable " + c);
-                        return false;
-                    }
-                }
-                result = result && value;
+            if (terms.length != 2) {
+                System.err.println("Error: invalid expression");
+                return false;
             }
+            boolean left = evaluateExpression(terms[0]);
+            boolean right = evaluateExpression(terms[1]);
 
-            return result;
+            return left && right; // logical AND
 
         } else if (expression.equals("T")) {
 

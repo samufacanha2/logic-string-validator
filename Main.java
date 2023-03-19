@@ -10,11 +10,11 @@ public class Main {
 
         Validacao v = new Validacao(expression);
 
-        do {
+        while (!v.isFbf()) { // validate the expression
             System.out.println("Invalid expression, please enter a valid one.");
             expression = input.nextLine();
             v = new Validacao(expression);
-        } while (!v.isFbf());
+        }
 
         // Prompt the user to enter values for the variables
         for (char variable : Evaluator.getVariables(expression)) {
@@ -23,7 +23,7 @@ public class Main {
             expression = expression.replace(variable, value ? 'T' : 'F');
         }
 
-        while (expression.contains("~T") || expression.contains("~F")) {
+        while (expression.contains("~T") || expression.contains("~F")) { // replace all ~T with F and ~F with T
             expression = expression.replace("~T", "F");
             expression = expression.replace("~F", "T");
         }
