@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Tableaux {
 
     public static boolean checkFormula(String formula) {
@@ -10,6 +12,43 @@ public class Tableaux {
         if (node.isAtomic()) {
             return;
         }
+        ApplyRules(node);
+        if (node.getLeftChild() != null)
+            buildTree(node.getLeftChild());
+
+        if (node.getRightChild() != null)
+            buildTree(node.getRightChild());
+
+        return;
+    }
+
+    private static boolean checkTreeOpen(Node node) {
+        Node curentNode = node;
+        ArrayList<String> propositions = new ArrayList<String>();
+        while (curentNode.getRightChild() == null && curentNode.getLeftChild() == null) {
+            curentNode = node.getLeftChild();
+            if (curentNode.isAtomic()) {
+                propositions.add(curentNode.getLeftSubstring());
+                if (contradictoryPropositions(propositions)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean contradictoryPropositions(ArrayList<String> propositions) {
+        for (int i = 0; i < propositions.size(); i++) {
+            for (int j = i + 1; j < propositions.size(); j++) {
+                if (propositions.get(i).equals("~" + propositions.get(j))) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static void ApplyRules(Node node) {
         R1(node);
         R2(node);
         R3(node);
@@ -21,29 +60,13 @@ public class Tableaux {
         R9(node);
     }
 
-    private static boolean checkTreeOpen(Node node) {
-        if (node.isAtomic()) {
-            return true;
-        }
-        if (node.isNegated()) {
-            return checkTreeClosed(node);
-        }
-        return checkTreeOpen(node.getLeftChild()) && checkTreeOpen(node.getRightChild());
-    }
-
-    private static boolean checkTreeClosed(Node node) {
-        if (node.isAtomic()) {
-            return false;
-        }
-        if (node.isNegated()) {
-            return checkTreeOpen(node);
-        }
-        return checkTreeClosed(node.getLeftChild()) || checkTreeClosed(node.getRightChild());
-    }
-
     private static void R1(Node node) {
         if (node.getConnector() != '^')
             return;
+
+        if (node.isNegated()) {
+            return;
+        }
         Node grandChild = new Node(node.getRightSubstring());
         Node child = new Node(node.getLeftSubstring());
         child.addLeftChild(grandChild);

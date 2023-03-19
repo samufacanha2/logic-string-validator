@@ -33,9 +33,14 @@ class Node {
             if (formula.length() == 3 && formula.charAt(0) == '('
                     && formula.charAt(2) == ')') {
                 this.isAtomic = true;
-            } else if (formula.length() == 4 && formula.charAt(0) == '~' && formula.charAt(1) == '('
-                    && formula.charAt(3) == ')') {
+            } else if (formula.length() == 4 && formula.charAt(1) == '('
+                    && formula.charAt(3) == ')' && formula.charAt(0) == '~') {
                 this.isAtomic = true;
+            } else if (formula.length() == 4 && formula.charAt(0) == '('
+                    && formula.charAt(3) == ')' && formula.charAt(1) == '~') {
+                this.leftSubstring = "~(" + formula.charAt(2) + ")";
+                this.isAtomic = true;
+
             } else {
                 this.isAtomic = false;
             }

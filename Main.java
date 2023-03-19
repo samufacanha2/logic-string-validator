@@ -5,14 +5,14 @@ public class Main {
         // Validacao v = new Validacao(formula);
         // System.out.println(v.isFbf());
         // System.out.println(Tableaux.checkFormula(formula));
-        String formula = "(p^q)";
+        String formula = "((p^q)^~p)";
 
         System.out.println("formula: " + formula);
 
-        // System.out.println(Tableaux.checkFormula(formula));
+        System.out.println(Tableaux.checkFormula(formula));
 
-        Node node = new Node(formula);
-        node.print();
+        // Node node = new Node(formula);
+        // node.print();
 
     }
 }
