@@ -24,6 +24,7 @@ public class Evaluator {
                                                                                    // parentheses
             boolean subexpressionResult = evaluateExpression(subexpression);
 
+            // down-top recursive evaluation of the expression
             expression = expression.substring(0, startIndex) + (subexpressionResult ? "T" : "F")
                     + expression.substring(endIndex + 1); // replace the subexpression with its result
 
@@ -39,7 +40,7 @@ public class Evaluator {
             boolean left = evaluateExpression(terms[0]);
             boolean right = evaluateExpression(terms[1]);
 
-            return (left && right) || (!left && !right); // a ↔ b = (a → b) ^ (b → a)
+            return (left && right) || (!left && !right); // a ↔ b = (a ^ b) v (~a ^ ~b)
 
         } else if (expression.contains("→")) {
 
