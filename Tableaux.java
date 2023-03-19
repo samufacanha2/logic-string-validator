@@ -55,9 +55,9 @@ public class Tableaux {
             node.addChild(child2);
             System.out.println(subformulas[0] + "v" + subformulas[1]);
             return checkSubtree(child1) || checkSubtree(child2);
-        } else if (formula.contains("<->")) {
+        } else if (formula.contains("↔")) {
             // Equivalence rule
-            String[] subformulas = formula.split("<->");
+            String[] subformulas = formula.split("↔");
             String child1Formula = "(" + subformulas[0] + "^" + subformulas[1] + ")";
             String child2Formula = "(~" + subformulas[0] + "^~" + subformulas[1] + ")";
             Node child1 = new Node(child1Formula);
@@ -67,9 +67,9 @@ public class Tableaux {
             System.out.println(child1Formula + "^" + child2Formula);
 
             return checkSubtree(child1) && checkSubtree(child2);
-        } else if (formula.contains("->")) {
+        } else if (formula.contains("→")) {
             // Implication rule
-            String[] subformulas = formula.split("->");
+            String[] subformulas = formula.split("→");
             String child1Formula = "~" + subformulas[0] + "";
             Node child1 = new Node(child1Formula);
             Node child2 = new Node(subformulas[1]);

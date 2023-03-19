@@ -5,7 +5,7 @@ class Node {
     private ArrayList<Node> children;
     private Node parent;
 
-    // private String[] CONNECTORS = { "^", "v", "<->", "->" };
+    // private String[] CONNECTORS = { "^", "v", "↔", "→" };
 
     public Node(String formula) {
         // check if formula has parentheses then remove them
