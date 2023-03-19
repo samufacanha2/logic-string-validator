@@ -12,19 +12,16 @@ public class Tableaux {
 
         // Check for a contradiction
         if (nodeHasContradiction(node)) {
-            System.out.println("Contradiction found");
             return false;
         }
 
         // Check for a closed branch
         if (nodeIsClosed(node)) {
-            System.out.println("Closed branch found");
             return false;
         }
 
         // Check for a complete branch
         if (nodeIsComplete(node)) {
-            System.out.println("Complete branch found");
             return true;
         }
 
@@ -47,6 +44,7 @@ public class Tableaux {
             Node child2 = new Node(subformulas[1]);
             node.addChild(child1);
             node.addChild(child2);
+            System.out.println(subformulas[0] + "^" + subformulas[1]);
             return checkSubtree(child1) && checkSubtree(child2);
         } else if (formula.contains("v")) {
             // Disjunction rule
@@ -55,22 +53,30 @@ public class Tableaux {
             Node child2 = new Node(subformulas[1]);
             node.addChild(child1);
             node.addChild(child2);
+            System.out.println(subformulas[0] + "v" + subformulas[1]);
             return checkSubtree(child1) || checkSubtree(child2);
         } else if (formula.contains("<->")) {
             // Equivalence rule
             String[] subformulas = formula.split("<->");
-            Node child1 = new Node("(" + subformulas[0] + "^" + subformulas[1] + ")");
-            Node child2 = new Node("(~" + subformulas[0] + "^~" + subformulas[1] + ")");
+            String child1Formula = "(" + subformulas[0] + "^" + subformulas[1] + ")";
+            String child2Formula = "(~" + subformulas[0] + "^~" + subformulas[1] + ")";
+            Node child1 = new Node(child1Formula);
+            Node child2 = new Node(child2Formula);
             node.addChild(child1);
             node.addChild(child2);
+            System.out.println(child1Formula + "^" + child2Formula);
+
             return checkSubtree(child1) && checkSubtree(child2);
         } else if (formula.contains("->")) {
             // Implication rule
             String[] subformulas = formula.split("->");
-            Node child1 = new Node("~" + subformulas[0]);
+            String child1Formula = "~" + subformulas[0] + "";
+            Node child1 = new Node(child1Formula);
             Node child2 = new Node(subformulas[1]);
             node.addChild(child1);
             node.addChild(child2);
+            System.out.println(child1Formula + "v" + subformulas[1]);
+
             return checkSubtree(child1) || checkSubtree(child2);
         } else if (formula.length() == 1) {
             // Atomic formula

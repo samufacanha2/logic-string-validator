@@ -27,8 +27,6 @@ class Node {
             }
         }
 
-        System.out.println(formula.trim());
-
         this.formula = formula.trim();
         this.children = new ArrayList<>();
         this.parent = null;
