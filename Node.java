@@ -4,6 +4,7 @@ class Node {
     private String formula;
     private ArrayList<Node> children;
     private Node parent;
+    private boolean isAtomic;
 
     // private String[] CONNECTORS = { "^", "v", "↔", "→" };
 
@@ -30,10 +31,23 @@ class Node {
         this.formula = formula.trim();
         this.children = new ArrayList<>();
         this.parent = null;
+
+        // Check if formula is atomic
+        if (formula.length() == 1) {
+            isAtomic = true;
+        } else if (formula.length() == 2 && formula.startsWith("~")) {
+            isAtomic = true;
+        } else {
+            isAtomic = false;
+        }
     }
 
     public String getFormula() {
         return formula;
+    }
+
+    public boolean isAtomic() {
+        return isAtomic;
     }
 
     public void addChild(Node child) {
