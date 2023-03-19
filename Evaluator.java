@@ -6,7 +6,7 @@ public class Evaluator {
     public static ArrayList<Character> getVariables(String expression) {
         ArrayList<Character> variables = new ArrayList<>();
         for (char c : expression.toCharArray()) {
-            if (Character.isLetter(c) && !variables.contains(c) && c != 'T' && c != 'F' && c != 'v') {
+            if (Character.isLetter(c) && !variables.contains(c) && c != 'T' && c != 'F') {
                 variables.add(c);
             }
         }
@@ -54,9 +54,9 @@ public class Evaluator {
 
             return !left || right; // a → b = ~a v b
 
-        } else if (expression.contains("v")) {
+        } else if (expression.contains("∨")) {
 
-            String[] terms = expression.split("v");
+            String[] terms = expression.split("∨");
             if (terms.length != 2) {
                 System.err.println("Error: invalid expression");
                 return false;
