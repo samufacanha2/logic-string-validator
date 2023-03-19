@@ -12,16 +12,19 @@ public class Tableaux {
 
         // Check for a contradiction
         if (nodeHasContradiction(node)) {
+            System.out.println("Contradiction found");
             return false;
         }
 
         // Check for a closed branch
         if (nodeIsClosed(node)) {
+            System.out.println("Closed branch found");
             return false;
         }
 
         // Check for a complete branch
         if (nodeIsComplete(node)) {
+            System.out.println("Complete branch found");
             return true;
         }
 
@@ -32,7 +35,12 @@ public class Tableaux {
             Node child = new Node(subformula);
             node.addChild(child);
             return checkSubtree(child);
-        } else if (formula.contains("^")) {
+
+        }
+
+        else if (formula.contains("^"))
+
+        {
             // Conjunction rule
             String[] subformulas = formula.split("\\^");
             Node child1 = new Node(subformulas[0]);
@@ -74,10 +82,10 @@ public class Tableaux {
     }
 
     private static boolean nodeHasContradiction(Node node) {
-        ArrayList<Node> siblings = node.getSiblings();
-        for (Node sibling : siblings) {
-            if (sibling.getFormula().equals("~" + node.getFormula()) ||
-                    node.getFormula().equals("~" + sibling.getFormula())) {
+        ArrayList<Node> children = node.getChildren();
+        for (Node child : children) {
+            if (child.getFormula().equals("~" + node.getFormula()) ||
+                    node.getFormula().equals("~" + child.getFormula())) {
                 return true;
             }
         }
