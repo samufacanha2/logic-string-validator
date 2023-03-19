@@ -1,66 +1,157 @@
 import java.util.ArrayList;
 
 class Node {
-    private String formula;
-    private ArrayList<Node> children;
+    private String leftSubstring;
+    private String rightSubstring;
+    private Node leftChild;
+    private Node rightChild;
     private Node parent;
     private boolean isAtomic;
+    private char connector;
+    private boolean negated;
 
     // private String[] CONNECTORS = { "^", "v", "↔", "→" };
 
     public Node(String formula) {
-        // check if formula has parentheses then remove them
-        if (formula.startsWith("(") && formula.endsWith(")")) {
-            formula = formula.substring(1, formula.length() - 1);
-        }
-        if (formula.length() == 2) {
-            if (formula.startsWith("(")) {
-                formula = formula.substring(1);
-            } else if (formula.endsWith(")")) {
-                formula = formula.substring(0, formula.length() - 1);
-            }
-        }
-        if (formula.length() == 3 && formula.contains("~")) {
-            if (formula.startsWith("(")) {
-                formula = formula.substring(1);
-            } else if (formula.endsWith(")")) {
-                formula = formula.substring(0, formula.length() - 1);
-            }
-        }
 
-        this.formula = formula.trim();
-        this.children = new ArrayList<>();
+        this.leftChild = null;
+        this.rightChild = null;
         this.parent = null;
 
-        // Check if formula is atomic
-        if (formula.length() == 1) {
-            isAtomic = true;
-        } else if (formula.length() == 2 && formula.startsWith("~")) {
-            isAtomic = true;
+        if (formula.charAt(0) == '~') {
+            this.negated = true;
         } else {
-            isAtomic = false;
+            this.negated = false;
         }
+
+        char connector = getConnectorFromFormula(formula);
+        this.connector = connector;
+
+        if (connector == ' ') {
+            this.leftSubstring = formula;
+
+            if (formula.length() == 3 && formula.charAt(0) == '('
+                    && formula.charAt(2) == ')') {
+                this.isAtomic = true;
+            } else if (formula.length() == 4 && formula.charAt(0) == '~' && formula.charAt(1) == '('
+                    && formula.charAt(3) == ')') {
+                this.isAtomic = true;
+            } else {
+                this.isAtomic = false;
+            }
+            return;
+        } else {
+            this.isAtomic = false;
+            this.leftSubstring = getLeftSubstringFromFormula(formula);
+            this.rightSubstring = getRightSubstringFromFormula(formula);
+        }
+
     }
 
-    public String getFormula() {
-        return formula;
+    private String getLeftSubstringFromFormula(String formula) {
+        int leftSubstringEnd = 0;
+        int leftSubstringStart = 0;
+        int openParentheses = 0;
+
+        for (int i = 0; i < formula.length(); i++) {
+            if (formula.charAt(i) == '(') {
+                openParentheses++;
+            } else if (formula.charAt(i) == ')') {
+                openParentheses--;
+            } else if (formula.charAt(i) == '^' || formula.charAt(i) == 'v' || formula.charAt(i) == '→'
+                    || formula.charAt(i) == '↔') {
+                if (openParentheses == (this.negated ? 0 : 1)) {
+                    leftSubstringEnd = i;
+                    break;
+                }
+            }
+        }
+        return formula.substring(leftSubstringStart, leftSubstringEnd) + (this.negated ? "" : ")");
+    }
+
+    private String getRightSubstringFromFormula(String formula) {
+        int rightSubstringStart = 0;
+        int rightSubstringEnd = formula.length();
+        int openParentheses = 0;
+        for (int i = 0; i < formula.length(); i++) {
+            if (formula.charAt(i) == '(') {
+                openParentheses++;
+            } else if (formula.charAt(i) == ')') {
+                openParentheses--;
+            } else if (formula.charAt(i) == '^' || formula.charAt(i) == 'v' || formula.charAt(i) == '→'
+                    || formula.charAt(i) == '↔') {
+                if (openParentheses == (this.negated ? 0 : 1)) {
+                    rightSubstringStart = i + 1;
+                    break;
+                }
+            }
+        }
+        return (this.negated ? "" : "(") + formula.substring(rightSubstringStart, rightSubstringEnd);
+    }
+
+    private char getConnectorFromFormula(String formula) {
+        int openParentheses = 0;
+        for (int i = 0; i < formula.length(); i++) {
+            if (formula.charAt(i) == '(') {
+                openParentheses++;
+            } else if (formula.charAt(i) == ')') {
+                openParentheses--;
+            } else if (formula.charAt(i) == '^' || formula.charAt(i) == 'v' || formula.charAt(i) == '→'
+                    || formula.charAt(i) == '↔') {
+                if (openParentheses == (this.negated ? 0 : 1)) {
+                    return formula.charAt(i);
+                }
+            }
+        }
+        return ' ';
+    }
+
+    public String getLeftSubstring() {
+        return leftSubstring;
+    }
+
+    public String getRightSubstring() {
+        return rightSubstring;
+    }
+
+    public char getConnector() {
+        return connector;
+    }
+
+    public boolean isNegated() {
+        return negated;
     }
 
     public boolean isAtomic() {
         return isAtomic;
     }
 
-    public void addChild(Node child) {
-        children.add(child);
+    public void addLeftChild(Node child) {
+        leftChild = child;
         child.setParent(this);
     }
 
-    public void removeChild(Node child) {
-        children.remove(child);
-        child.setParent(null);
+    public void addRightChild(Node child) {
+        rightChild = child;
+        child.setParent(this);
+    }
+
+    public Node getLeftChild() {
+        return leftChild;
+    }
+
+    public Node getRightChild() {
+        return rightChild;
     }
 
     public ArrayList<Node> getChildren() {
+        ArrayList<Node> children = new ArrayList<>();
+        if (leftChild != null) {
+            children.add(leftChild);
+        }
+        if (rightChild != null) {
+            children.add(rightChild);
+        }
         return children;
     }
 
@@ -83,5 +174,16 @@ class Node {
             }
         }
         return siblings;
+    }
+
+    public void print() {
+
+        System.out.println("left substring: " + this.getLeftSubstring());
+        System.out.println("right substring: " + this.getRightSubstring());
+        System.out.println("connector: " + this.getConnector());
+        System.out.println("is atomic: " + this.isAtomic());
+        System.out.println("is negated: " + this.isNegated());
+
+        return;
     }
 }

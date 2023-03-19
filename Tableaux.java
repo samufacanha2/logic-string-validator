@@ -1,130 +1,155 @@
-import java.util.ArrayList;
-
 public class Tableaux {
 
     public static boolean checkFormula(String formula) {
         Node root = new Node(formula);
-        return checkSubtree(root);
+        buildTree(root);
+        return checkTreeOpen(root);
     }
 
-    private static boolean checkSubtree(Node node) {
-        String formula = node.getFormula();
-
-        // Check for a contradiction
-        if (nodeHasContradiction(node)) {
-            return false;
+    private static void buildTree(Node node) {
+        if (node.isAtomic()) {
+            return;
         }
+        R1(node);
+        R2(node);
+        R3(node);
+        R4(node);
+        R5(node);
+        R6(node);
+        R7(node);
+        R8(node);
+        R9(node);
+    }
 
-        // Check for a closed branch
-        if (nodeIsClosed(node)) {
-            return false;
-        }
-
-        // Check for a complete branch
-        if (nodeIsComplete(node)) {
+    private static boolean checkTreeOpen(Node node) {
+        if (node.isAtomic()) {
             return true;
         }
-
-        // Apply tableau rules based on the formula's main connective
-        if (formula.startsWith("~")) {
-            // Negation rule
-            String subformula = formula.substring(1);
-            Node child = new Node(subformula);
-            node.addChild(child);
-            return checkSubtree(child);
-
+        if (node.isNegated()) {
+            return checkTreeClosed(node);
         }
-
-        else if (formula.contains("^"))
-
-        {
-            // Conjunction rule
-            String[] subformulas = formula.split("\\^");
-            Node child1 = new Node(subformulas[0]);
-            Node child2 = new Node(subformulas[1]);
-            node.addChild(child1);
-            node.addChild(child2);
-            System.out.println(subformulas[0] + "^" + subformulas[1]);
-            return checkSubtree(child1) && checkSubtree(child2);
-        } else if (formula.contains("v")) {
-            // Disjunction rule
-            String[] subformulas = formula.split("v");
-            Node child1 = new Node(subformulas[0]);
-            Node child2 = new Node(subformulas[1]);
-            node.addChild(child1);
-            node.addChild(child2);
-            System.out.println(subformulas[0] + "v" + subformulas[1]);
-            return checkSubtree(child1) || checkSubtree(child2);
-        } else if (formula.contains("↔")) {
-            // Equivalence rule
-            String[] subformulas = formula.split("↔");
-            String child1Formula = "(" + subformulas[0] + "^" + subformulas[1] + ")";
-            String child2Formula = "(~" + subformulas[0] + "^~" + subformulas[1] + ")";
-            Node child1 = new Node(child1Formula);
-            Node child2 = new Node(child2Formula);
-            node.addChild(child1);
-            node.addChild(child2);
-            System.out.println(child1Formula + "^" + child2Formula);
-
-            return checkSubtree(child1) && checkSubtree(child2);
-        } else if (formula.contains("→")) {
-            // Implication rule
-            String[] subformulas = formula.split("→");
-            String child1Formula = "~" + subformulas[0] + "";
-            Node child1 = new Node(child1Formula);
-            Node child2 = new Node(subformulas[1]);
-            node.addChild(child1);
-            node.addChild(child2);
-            System.out.println(child1Formula + "v" + subformulas[1]);
-
-            return checkSubtree(child1) || checkSubtree(child2);
-        } else if (formula.length() == 1) {
-            // Atomic formula
-            return true;
-        }
-
-        // If we get here, something went wrong
-        throw new IllegalArgumentException("Invalid formula: " + formula);
+        return checkTreeOpen(node.getLeftChild()) && checkTreeOpen(node.getRightChild());
     }
 
-    private static boolean nodeHasContradiction(Node node) {
-        ArrayList<Node> children = node.getChildren();
-        for (Node child : children) {
-            if (child.getFormula().equals("~" + node.getFormula()) ||
-                    node.getFormula().equals("~" + child.getFormula())) {
-                return true;
-            }
-        }
-        if (node.getParent() != null) {
-            return nodeHasContradiction(node.getParent());
-        }
-        return false;
-    }
-
-    private static boolean nodeIsClosed(Node node) {
-        ArrayList<Node> siblings = node.getSiblings();
-        for (Node sibling : siblings) {
-            if (sibling.getFormula().equals(node.getFormula())) {
-                return true;
-            }
-        }
-        if (node.getParent() != null) {
-            return nodeIsClosed(node.getParent());
-        }
-        return false;
-    }
-
-    private static boolean nodeIsComplete(Node node) {
-        ArrayList<Node> children = node.getChildren();
-        if (children.isEmpty()) {
+    private static boolean checkTreeClosed(Node node) {
+        if (node.isAtomic()) {
             return false;
         }
-        for (Node child : children) {
-            if (!checkSubtree(child)) {
-                return false;
-            }
+        if (node.isNegated()) {
+            return checkTreeOpen(node);
         }
-        return true;
+        return checkTreeClosed(node.getLeftChild()) || checkTreeClosed(node.getRightChild());
+    }
+
+    private static void R1(Node node) {
+        if (node.getConnector() != '^')
+            return;
+        Node grandChild = new Node(node.getRightSubstring());
+        Node child = new Node(node.getLeftSubstring());
+        child.addLeftChild(grandChild);
+        node.addLeftChild(child);
+    }
+
+    private static void R2(Node node) {
+        if (node.getConnector() != 'v')
+            return;
+
+        if (node.isNegated()) {
+            return;
+        }
+        Node leftChild = new Node(node.getLeftSubstring());
+        Node rightChild = new Node(node.getRightSubstring());
+        node.addLeftChild(leftChild);
+        node.addRightChild(rightChild);
+    }
+
+    private static void R3(Node node) {
+        if (node.getConnector() != '→')
+            return;
+
+        if (node.isNegated()) {
+            return;
+        }
+        Node leftChild = new Node("~" + node.getLeftSubstring());
+        Node rightChild = new Node(node.getRightSubstring());
+        node.addLeftChild(leftChild);
+        node.addRightChild(rightChild);
+    }
+
+    private static void R4(Node node) {
+        if (node.getConnector() != '↔')
+            return;
+
+        if (node.isNegated()) {
+            return;
+        }
+        Node leftChild = new Node(node.getLeftSubstring() + '^' + node.getRightSubstring());
+        Node rightChild = new Node("~" + node.getLeftSubstring() + '^' + "~" + node.getRightSubstring());
+        node.addLeftChild(leftChild);
+        node.addRightChild(rightChild);
+    }
+
+    private static void R5(Node node) {
+        if (!node.isAtomic()) {
+            return;
+        }
+
+        if (node.isNegated() && node.getLeftSubstring().startsWith("~~")) {
+            Node child = new Node(node.getLeftSubstring().substring(2));
+            node.addLeftChild(child);
+        }
+    }
+
+    private static void R6(Node node) {
+        if (node.getConnector() != '^')
+            return;
+
+        if (!node.isNegated()) {
+            return;
+        }
+        Node leftChild = new Node("~" + node.getLeftSubstring());
+        Node rightChild = new Node("~" + node.getRightSubstring());
+        node.addLeftChild(leftChild);
+        node.addRightChild(rightChild);
+    }
+
+    private static void R7(Node node) {
+        if (node.getConnector() != 'v')
+            return;
+
+        if (!node.isNegated()) {
+            return;
+        }
+        Node grandChild = new Node("~" + node.getLeftSubstring());
+        Node child = new Node("~" + node.getRightSubstring());
+        child.addLeftChild(grandChild);
+        node.addLeftChild(child);
+    }
+
+    private static void R8(Node node) {
+        if (node.getConnector() != '→')
+            return;
+
+        if (!node.isNegated()) {
+            return;
+        }
+        Node grandChild = new Node(node.getLeftSubstring());
+        Node child = new Node("~" + node.getRightSubstring());
+        child.addLeftChild(grandChild);
+        node.addLeftChild(child);
+    }
+
+    private static void R9(Node node) {
+        if (node.getConnector() != '↔')
+            return;
+
+        if (!node.isNegated()) {
+            return;
+        }
+        Node leftChild = new Node("~" + node.getLeftSubstring() + "^" + node.getRightSubstring());
+        Node rightChild = new Node(node.getLeftSubstring() + "^~" + node.getRightSubstring());
+        node.addLeftChild(leftChild);
+        node.addRightChild(rightChild);
     }
 
 }
