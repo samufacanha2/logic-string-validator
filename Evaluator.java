@@ -19,16 +19,19 @@ public class Evaluator {
         if (expression.contains("(") && expression.contains(")")) {
             int startIndex = expression.lastIndexOf("(");
             int endIndex = expression.indexOf(")", startIndex);
-            String subexpression = expression.substring(startIndex + 1, endIndex);
+
+            String subexpression = expression.substring(startIndex + 1, endIndex); // get the subexpression within the
+                                                                                   // parentheses
             boolean subexpressionResult = evaluateExpression(subexpression);
+
             expression = expression.substring(0, startIndex) + (subexpressionResult ? "T" : "F")
-                    + expression.substring(endIndex + 1);
+                    + expression.substring(endIndex + 1); // replace the subexpression with its result
 
-            return evaluateExpression(expression);
+            return evaluateExpression(expression); // evaluate the new expression
 
-        } else if (expression.contains("<->")) {
+        } else if (expression.contains("↔")) {
 
-            String[] terms = expression.split("<->");
+            String[] terms = expression.split("↔");
             if (terms.length != 2) {
                 System.err.println("Error: invalid expression");
                 return false;
@@ -38,9 +41,9 @@ public class Evaluator {
 
             return (left && right) || (!left && !right);
 
-        } else if (expression.contains("->")) {
+        } else if (expression.contains("→")) {
 
-            String[] terms = expression.split("->");
+            String[] terms = expression.split("→");
             if (terms.length != 2) {
                 System.err.println("Error: invalid expression");
                 return false;
