@@ -66,9 +66,9 @@ public class Evaluator {
 
             return left || right; // logical OR
 
-        } else if (expression.contains("^")) {
+        } else if (expression.contains("∧")) {
 
-            String[] terms = expression.split("\\^");
+            String[] terms = expression.split("\\∧");
             if (terms.length != 2) {
                 System.err.println("Error: invalid expression");
                 return false;
