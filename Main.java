@@ -1,8 +1,9 @@
 public class Main {
 
     public static void main(String[] args) {
-        // Validacao v = new Validacao("p ∧ q");
+        String formula = "q^p->q";
+        // Validacao v = new Validacao(formula);
         // v.mostraCaracteres();
-        System.out.println(Tableaux.checkFormula("(qvp)"));
+        System.out.println(Tableaux.checkFormula(formula));
     }
 }

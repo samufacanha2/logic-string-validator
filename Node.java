@@ -1,17 +1,35 @@
 import java.util.ArrayList;
-import java.util.List;
 
 class Node {
     private String formula;
-    private List<Node> children;
+    private ArrayList<Node> children;
     private Node parent;
+
+    // private String[] CONNECTORS = { "^", "v", "<->", "->" };
 
     public Node(String formula) {
         // check if formula has parentheses then remove them
         if (formula.startsWith("(") && formula.endsWith(")")) {
             formula = formula.substring(1, formula.length() - 1);
         }
-        this.formula = formula;
+        if (formula.length() == 2) {
+            if (formula.startsWith("(")) {
+                formula = formula.substring(1);
+            } else if (formula.endsWith(")")) {
+                formula = formula.substring(0, formula.length() - 1);
+            }
+        }
+        if (formula.length() == 3 && formula.contains("~")) {
+            if (formula.startsWith("(")) {
+                formula = formula.substring(1);
+            } else if (formula.endsWith(")")) {
+                formula = formula.substring(0, formula.length() - 1);
+            }
+        }
+
+        System.out.println(formula.trim());
+
+        this.formula = formula.trim();
         this.children = new ArrayList<>();
         this.parent = null;
     }
@@ -30,7 +48,7 @@ class Node {
         child.setParent(null);
     }
 
-    public List<Node> getChildren() {
+    public ArrayList<Node> getChildren() {
         return children;
     }
 
@@ -42,11 +60,11 @@ class Node {
         return parent;
     }
 
-    public List<Node> getSiblings() {
+    public ArrayList<Node> getSiblings() {
         if (parent == null) {
             return new ArrayList<>();
         }
-        List<Node> siblings = new ArrayList<>();
+        ArrayList<Node> siblings = new ArrayList<>();
         for (Node sibling : parent.getChildren()) {
             if (!sibling.equals(this)) {
                 siblings.add(sibling);

@@ -1,4 +1,4 @@
-import java.util.List;
+import java.util.ArrayList;
 
 public class Tableaux {
 
@@ -74,7 +74,7 @@ public class Tableaux {
     }
 
     private static boolean nodeHasContradiction(Node node) {
-        List<Node> siblings = node.getSiblings();
+        ArrayList<Node> siblings = node.getSiblings();
         for (Node sibling : siblings) {
             if (sibling.getFormula().equals("~" + node.getFormula()) ||
                     node.getFormula().equals("~" + sibling.getFormula())) {
@@ -88,7 +88,7 @@ public class Tableaux {
     }
 
     private static boolean nodeIsClosed(Node node) {
-        List<Node> siblings = node.getSiblings();
+        ArrayList<Node> siblings = node.getSiblings();
         for (Node sibling : siblings) {
             if (sibling.getFormula().equals(node.getFormula())) {
                 return true;
@@ -101,7 +101,7 @@ public class Tableaux {
     }
 
     private static boolean nodeIsComplete(Node node) {
-        List<Node> children = node.getChildren();
+        ArrayList<Node> children = node.getChildren();
         if (children.isEmpty()) {
             return false;
         }
