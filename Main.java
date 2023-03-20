@@ -10,7 +10,7 @@ public class Main {
 
         Validacao v = new Validacao(expression);
 
-        while (!v.isFbf()) { // validate the expression
+        while (!v.isFbf() || !v.verificaConectivos()) { // validate the expression
             System.out.println("Invalid expression, please enter a valid one.");
             System.out.println("Example of a valid expression (A→B)∧(B→A)");
             expression = input.nextLine();
