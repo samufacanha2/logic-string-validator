@@ -12,6 +12,7 @@ public class Main {
 
         while (!v.isFbf()) { // validate the expression
             System.out.println("Invalid expression, please enter a valid one.");
+            System.out.println("Example of a valid expression (A → B) ∧ (B → A)");
             expression = input.nextLine();
             v = new Validacao(expression);
         }
